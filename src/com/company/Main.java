@@ -50,7 +50,7 @@ class CircularQueue{
     }
 
     public void printQueue(){
-        System.out.println("front: " + front + " | rear: " + rear);
+        System.out.println(front + " ~ " + rear);
         if(front < rear){
             for(int i = front+1; i <= rear; i++){
                 System.out.print(array[i] + " ");
