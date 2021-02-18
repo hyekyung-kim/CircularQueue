@@ -1,5 +1,7 @@
 package com.company;
+import java.util.Iterator;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 class CircularQueue{
     int front;
@@ -46,24 +48,20 @@ class CircularQueue{
 
             return array[front];
         }
-
     }
 
     public void printQueue(){
         System.out.println(front + " ~ " + rear);
-        if(front < rear){
-            for(int i = front+1; i <= rear; i++){
-                System.out.print(array[i] + " ");
-            }
-        } else if(front > rear){
-            for(int i = front+1; i < array.length; i++){
-                System.out.print(array[i] + " ");
-            }
-            for(int i = 0; i <= rear; i++){
-                System.out.print(array[i] + " ");
-            }
-        }
 
+        if(front < rear){
+            IntStream.range(front+1, rear+1).forEach((int i)
+                    -> System.out.print(array[i] + " "));
+        } else if(front > rear){
+            IntStream.range(front+1, array.length).forEach((int i)
+                    -> System.out.print(array[i] + " "));
+            IntStream.range(0, rear+1).forEach((int i)
+                    -> System.out.print(array[i] + " "));
+        }
         System.out.println();
     }
 }
