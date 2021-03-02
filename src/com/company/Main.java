@@ -1,5 +1,4 @@
 package com.company;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -9,59 +8,58 @@ class CircularQueue{
     int qSize;
     int[] array;
 
-    CircularQueue(int front, int rear, int qSize){
-        this.front = front;
-        this.rear = rear;
+    CircularQueue(int qSize){
+        this.front = 0;
+        this.rear = 0;
         this.qSize = qSize;
         array = new int[qSize];
     }
 
+    public int getAvailableSpace() {
+        return qSize - (rear - front);
+    }
+
     public boolean isEmpty(){
-        return front == rear;
+        return getAvailableSpace() == qSize;
     }
 
     public boolean isFull(){
-        return (rear + 1) % array.length == front;
+        return getAvailableSpace() == 0;
     }
 
     public void enQueue(int element){
         if(isFull()){
-            System.out.println("Queue is FULL\n");
+            throw new RuntimeException("Queue is FULL\n");
         }else {
             rear++;
-            if(rear / array.length > 0) {
-                rear = rear % array.length;
-            }
-            array[rear] = element;
+
+            array[convertToRealIndex(rear)] = element;
         }
     }
 
     public int deQueue(){
         if(isEmpty()){
-            System.out.println("Queue is EMPTY\n");
-            return -1;
+            throw new RuntimeException("Queue is EMPTY\n");
         }else{
             front++;
-            if(front / array.length > 0){
-                front = front % array.length;
+            if(front > qSize) {
+                front -= qSize;
+                rear -= qSize;
             }
 
-            return array[front];
+            return array[convertToRealIndex(front)];
         }
     }
 
-    public void printQueue(){
+    private int convertToRealIndex(int currentPosition) {
+        return currentPosition % qSize;
+    }
+
+    public void print(){
         System.out.println(front + " ~ " + rear);
 
-        if(front < rear){
-            IntStream.range(front+1, rear+1).forEach((int i)
-                    -> System.out.print(array[i] + " "));
-        } else if(front > rear){
-            IntStream.range(front+1, array.length).forEach((int i)
-                    -> System.out.print(array[i] + " "));
-            IntStream.range(0, rear+1).forEach((int i)
-                    -> System.out.print(array[i] + " "));
-        }
+        IntStream.range(front + 1, rear +1)
+                .forEach(i -> System.out.println(array[convertToRealIndex(i)] + " "));
         System.out.println();
     }
 }
@@ -75,7 +73,7 @@ public class Main {
         int qSize = input.nextInt();
 
         // 큐 생성 & 초기화
-        CircularQueue cqueue = new CircularQueue(0, 0, qSize+1);
+        CircularQueue cqueue = new CircularQueue(qSize+1);
 
         // 큐 정보 입력
         System.out.println("\nMENU (1: enQueue | 2: deQueue | 3: print queue | -1: quit)\n");
@@ -89,12 +87,15 @@ public class Main {
                 System.out.print("Input queue element: ");
                 int tmp = input.nextInt();
                 cqueue.enQueue(tmp);
+                if(cqueue.isEmpty()){
+                    System.out.println("empty");
+                }
             } // queue 삭제
             else if(check == 2){
                 System.out.println("Get element from queue: " + cqueue.deQueue());
             } // 출력
             else if(check == 3){
-                cqueue.printQueue();
+                cqueue.print();
             } // 종료
             else if(check == -1){
                 System.out.println("exit...");
